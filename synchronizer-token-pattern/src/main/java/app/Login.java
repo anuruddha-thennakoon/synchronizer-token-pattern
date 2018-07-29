@@ -19,8 +19,9 @@ import javax.xml.bind.DatatypeConverter;
 public class Login extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+	String jsession;
 	private final SecureRandom secureRandom = new SecureRandom();
-	
+
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		processRequest(request, response);
 	}
@@ -32,31 +33,33 @@ public class Login extends HttpServlet {
 		try {
 			String username = request.getParameter("username");
 			String password = request.getParameter("password");
-			
-			if (username.equals("admin")&&password.equals("admin")) {
-				
-				//generate session identifier
-				String sessionIdentifier = UUID.randomUUID().toString();
-				System.out.println("sessionIdentifier "+sessionIdentifier);
-				
-				//generate cookies
-				Cookie cookie = new Cookie("session-identifier",sessionIdentifier);
-				response.addCookie(cookie);
-				System.out.println("cookie "+cookie);
-				
-				//generate cookies CSRF token
-				String csrfToken = generateToken();
-				System.out.println("csrfToken "+csrfToken);
 
-				//store session identifier
-				new Map().setValue(sessionIdentifier, csrfToken);
-				
+			if (username.equals("admin") && password.equals("admin")) {
+
+				// get generated session cookies
+				Cookie[] cookies = request.getCookies();
+				if (cookies != null) {
+					for (Cookie cookie : cookies) {
+						if (cookie.getName().equals("JSESSIONID")) {
+							jsession = cookie.getValue();
+						}
+					}
+				}
+				System.out.println("jsession " + jsession);
+
+				// generate cookies CSRF token
+				String csrfToken = UUID.randomUUID().toString();
+				System.out.println("csrfToken " + csrfToken);
+
+				// store session identifier
+				new Map().setValue(jsession, csrfToken);
+
 				//
 				HttpSession session = request.getSession();
-                session.setAttribute("csrf", csrfToken);
-                
+				session.setAttribute("csrf", csrfToken);
+
 				response.sendRedirect("form.jsp");
-				
+
 			} else {
 				out.println("Invalid username and/or password");
 			}
@@ -65,11 +68,4 @@ public class Login extends HttpServlet {
 			out.close();
 		}
 	}
-	
-	private String generateToken() {
-        byte[] buffer = new byte[50];
-        this.secureRandom.nextBytes(buffer);
-        return DatatypeConverter.printHexBinary(buffer);
-    }
-	
 }

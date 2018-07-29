@@ -59,9 +59,10 @@ input[type=submit]:hover {
 	clear: both;
 }
 
-.center{
+.center {
 	text-align: center;
 }
+
 @media screen and (max-width: 600px) {
 	.col-25, .col-75, input[type=submit] {
 		width: 100%;
@@ -69,6 +70,28 @@ input[type=submit]:hover {
 	}
 }
 </style>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+<script>
+	var uri = 'http://localhost:8080/synchronizer-token-pattern/token';
+	$(document).ready(function() {
+		$.ajax({
+			type : "GET",
+			url : uri,
+			dataType : "json",
+			cache : false,
+			crossDomain : true,
+			processData : true,
+			success : function(data) {
+				$("#csrf").val(data['token']);
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("error");
+			}
+		});
+	});
+</script>
+
+
 </head>
 <body>
 
@@ -95,8 +118,7 @@ input[type=submit]:hover {
 			<div class="row">
 				<div class="col-25"></div>
 				<div class="col-75">
-					<input type="hidden" name="csrf"
-						value="<%=session.getAttribute("csrf")%>">
+					<input type="hidden" id="csrf" name="csrf">
 				</div>
 			</div>
 			<div class="row">

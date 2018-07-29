@@ -2,6 +2,7 @@ package app;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,25 +10,27 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-@WebServlet(name = "Submit", urlPatterns = { "/submit" })
-public class Submit extends HttpServlet {
+import com.google.gson.JsonObject;
+
+@WebServlet(name = "Token", urlPatterns = { "/token" })
+public class GetToken extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	String csrfToken = null;
 
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		processRequest(request, response);
 	}
 
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
+
 		PrintWriter out = response.getWriter();
 		try {
-			String csrf = request.getParameter("csrf");
 			Cookie[] cookies = request.getCookies();
-
 			if (cookies != null) {
 				for (Cookie cookie : cookies) {
 					if (cookie.getName().equals("JSESSIONID")) {
@@ -36,18 +39,13 @@ public class Submit extends HttpServlet {
 				}
 			}
 			
-			if (csrf != null) {
-				if (csrf.equals(csrfToken)) {
-					out.println("Form submitted successfully");
-				} else {
-					out.println("Error occur while validating the CSRF token");
-				}
-			} else {
-				out.println("CSRF token absent or value is null/empty");
-			}
-
+			//convert response to JsonObject
+			JsonObject json = new JsonObject();
+			json.addProperty("token", csrfToken);
+			out.print(json.toString());
 		} finally {
 			out.close();
 		}
 	}
+
 }
