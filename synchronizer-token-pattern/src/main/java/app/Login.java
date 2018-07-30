@@ -2,26 +2,19 @@ package app;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.SecureRandom;
-import java.util.HashMap;
 import java.util.UUID;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.xml.bind.DatatypeConverter;
 
 @WebServlet(name = "Login", urlPatterns = { "/login" })
 public class Login extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	String jsession;
-	private final SecureRandom secureRandom = new SecureRandom();
-
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		processRequest(request, response);
 	}
@@ -45,18 +38,12 @@ public class Login extends HttpServlet {
 						}
 					}
 				}
-				System.out.println("jsession " + jsession);
 
-				// generate cookies CSRF token
+				// generate CSRF token
 				String csrfToken = UUID.randomUUID().toString();
-				System.out.println("csrfToken " + csrfToken);
 
 				// store session identifier
 				new Map().setValue(jsession, csrfToken);
-
-				//
-				HttpSession session = request.getSession();
-				session.setAttribute("csrf", csrfToken);
 
 				response.sendRedirect("form.jsp");
 
