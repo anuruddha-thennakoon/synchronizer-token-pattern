@@ -45,6 +45,8 @@ public class Login extends HttpServlet {
 				// store session identifier
 				new Map().setValue(jsession, csrfToken);
 
+				System.out.println("csrfToken Login :"+csrfToken);
+				
 				response.sendRedirect("form.jsp");
 
 			} else {
