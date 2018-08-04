@@ -36,8 +36,6 @@ public class GetToken extends HttpServlet {
 				}
 			}
 			
-			System.out.println("csrfToken get token :"+csrfToken);
-			
 			//convert response to JsonObject
 			JsonObject json = new JsonObject();
 			json.addProperty("token", csrfToken);

@@ -35,10 +35,7 @@ public class Submit extends HttpServlet {
 				}
 			}
 			
-			System.out.println("csrf submit b:"+csrf);
 			if (csrf != null) {
-				System.out.println("csrf submit :"+csrf);
-				System.out.println("csrfToken submit :"+csrfToken);
 				if (csrf.equals(csrfToken)) {
 					out.println("Form submitted successfully");
 				} else {

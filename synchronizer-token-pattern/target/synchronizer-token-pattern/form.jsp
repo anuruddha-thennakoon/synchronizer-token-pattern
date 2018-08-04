@@ -118,7 +118,7 @@ input[type=submit]:hover {
 			<div class="row">
 				<div class="col-25"></div>
 				<div class="col-75">
-					<input type="hidden" id="csrf" name="csrf">
+					<input type="hidden" id="csrf" name="csrftoken">
 				</div>
 			</div>
 			<div class="row">
